@@ -1,0 +1,4 @@
+require 'puppet-lint/tasks/puppet-lint'
+require '/Users/johan/git/puppet-parser/lib/puppet-parser/puppet-parser'
+
+PuppetLint.configuration.send("disable_80chars")

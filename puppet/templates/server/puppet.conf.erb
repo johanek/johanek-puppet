@@ -1,0 +1,42 @@
+# File managed by Puppet
+
+[main]
+vardir = /var/lib/puppet
+logdir = /var/log/puppet
+rundir = /var/run/puppet
+pluginsync = true
+
+# Environment Module Paths
+modulepath = $confdir/modules
+manifest = $confdir/manifests/site.pp
+
+[agent]
+
+ssldir = $vardir/ssl/<%= scope.lookupvar('puppet::server') %>
+runinterval = <%= scope.lookupvar('puppet::params::runinterval') %>
+server = <%= scope.lookupvar('puppet::params::server') %>
+<% if scope.lookupvar('puppet::params::environment') -%>environment = <%= scope.lookupvar('puppet::params::environment') %>
+<% end -%>
+
+[master]
+<% if scope.lookupvar('puppet::server::params::bindaddress') != "" -%>bindaddress = <%= scope.lookupvar('puppet::server::params::bindaddress') %><% end -%>
+<% if scope.lookupvar('puppet::server::params::passenger') == true -%>
+<% if scope.lookupvar('puppet::server::proxy') == false -%>ssl_client_header = SSL_CLIENT_S_DN
+ssl_client_verify_header = SSL_CLIENT_VERIFY
+<% elsif scope.lookupvar('puppet::server::proxy') == true -%>ssl_client_verify_header = HTTP_X_CLIENT_VERIFY
+ssl_client_header = HTTP_X_CLIENT_DN
+<% end -%><% end -%>
+certname = <%= scope.lookupvar('puppet::server::params::servername') %>
+ssldir = $vardir/ssl/<%= fqdn %>
+hiera_config = /etc/hiera.yaml
+
+<% if scope.lookupvar('puppet::server::storeconfigs') == true -%>storeconfigs = true
+storeconfigs_backend = puppetdb<% end -%>
+
+reports = http
+reporturl = http://<%= scope.lookupvar('puppet::dashboard_server') %>:<%= scope.lookupvar('puppet::dashboard_port') %>/reports/upload
+#reportfrom = root
+#reports = store, http
+
+<% if scope.lookupvar('puppet::enc') == true -%>node_terminus = exec
+external_nodes = /etc/puppet/enc.sh<% end -%>

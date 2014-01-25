@@ -1,0 +1,43 @@
+# Managed by puppet
+
+[Main]
+dd_url: https://app.datadoghq.com
+api_key: <%= scope.lookupvar('datadog::apikey') %>
+debug_mode: no
+use_ec2_instance_id: no
+use_mount: no
+<% if scope.lookupvar('apache::enabled') == true %>apache_status_url: http://localhost/server-status/?auto<% end %>
+
+
+[loggers]
+keys:root,dogstatsd
+
+[handlers]
+keys:dogstatsd
+
+[formatters]
+keys:ddagent
+
+[logger_root]
+level:INFO
+handlers:
+propagate:0
+qualname:root
+
+[logger_dogstatsd]
+level:INFO
+handlers:dogstatsd
+propagate:0
+qualname:dogstatsd
+
+[handler_dogstatsd]
+class:FileHandler
+level:INFO
+formatter:ddagent
+args:('/tmp/dogstatsd.log', 'a')
+
+[formatter_ddagent]
+format: %(asctime)s | %(name)s | %(levelname)s | %(message)s
+class:logging.Formatter
+
+

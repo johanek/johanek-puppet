@@ -1,0 +1,22 @@
+# This file managed by puppet
+
+production:
+  database: <%= scope.lookupvar('puppet_dashboard::mysql_db') %>
+  username: <%= scope.lookupvar('puppet_dashboard::mysql_user') %>
+  password: <%= scope.lookupvar('puppet_dashboard::mysql_password') %>
+  encoding: utf8
+  adapter: mysql
+
+development:
+  database: dashboard_development
+  username: dashboard
+  password: 
+  encoding: utf8
+  adapter: mysql
+
+test:
+  database: dashboard_test
+  username: dashboard
+  password:
+  encoding: utf8
+  adapter: mysql

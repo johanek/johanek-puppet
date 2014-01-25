@@ -1,0 +1,32 @@
+Puppet module: puppet
+
+DESCRIPTION:
+This module installs and manages puppet.
+
+
+CLASS PARAMETERS:
+
+#General Parameters
+server          Hostname of puppet server
+runinterval     Frequency of puppet runs
+present         Set to 'false' to remove package
+enabled         Set to 'false' to stop service
+enableboot      Set to 'false' to prevent service starting at boot
+
+# Server Specific Parameters
+puppet_server   Set to 'true' to install puppet master
+report_server   Hostname of server where reports are sent
+
+
+USAGE:
+# Standard Classes 
+include puppet              # Install and run puppet
+
+# Puppet Server
+class { 'puppet':
+  puppet_server => true
+}
+
+ 
+DEPENDENCIES:
+Requires Ruby Module to be included

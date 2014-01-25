@@ -1,0 +1,14 @@
+# File managed by Puppet
+
+[main]
+vardir = /var/lib/puppet
+logdir = /var/log/puppet
+rundir = /var/run/puppet
+pluginsync = true
+
+[agent]
+
+ssldir = $vardir/ssl/<%= scope.lookupvar('puppet::server') %>/
+runinterval = <%= scope.lookupvar('puppet::params::runinterval') %>
+server = <%= scope.lookupvar('puppet::params::server') %>
+<% if scope.lookupvar('puppet::params::environment') -%>environment = <%= scope.lookupvar('puppet::params::environment') %><% end -%>

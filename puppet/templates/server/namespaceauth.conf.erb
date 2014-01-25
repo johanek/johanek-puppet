@@ -1,0 +1,24 @@
+# File managed by Puppet 
+
+[fileserver]
+<% scope.lookupvar('puppet::server::params::allow').each do |pa| %>allow <%= pa %>
+<% end %>
+
+[puppetmaster]
+<% scope.lookupvar('puppet::server::params::allow').each do |pa| %>allow <%= pa %>
+<% end %>
+
+[puppetrunner]
+allow <%= scope.lookupvar('puppet::server::params::servername') %>
+
+[puppetbucket]
+<% scope.lookupvar('puppet::server::params::allow').each do |pa| %>allow <%= pa %>
+<% end %>
+
+[puppetreports]
+<% scope.lookupvar('puppet::server::params::allow').each do |pa| %>allow <%= pa %>
+<% end %>
+
+[pelementserver]
+<% scope.lookupvar('puppet::server::params::allow').each do |pa| %>allow <%= pa %>
+<% end %>

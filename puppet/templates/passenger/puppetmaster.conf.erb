@@ -1,0 +1,53 @@
+# File Managed by Puppet
+
+Listen <%= port %>
+
+NameVirtualHost *:<%= port %>
+<VirtualHost *:<%= port %>>
+  ServerName <%= scope.lookupvar('puppet::server::passenger::config::servername') %>
+<% if serveraliases.is_a? Array -%>
+<% serveraliases.each do |name| -%><%= "  ServerAlias #{name}\n" %><% end -%>
+<% elsif serveraliases != '' -%>
+<%= "  ServerAlias #{serveraliases}" -%>
+<% end -%>
+
+<% if scope.lookupvar('puppet::server::proxy') == false -%>
+        SSLEngine on
+        SSLProtocol -ALL +SSLv3 +TLSv1
+        SSLCipherSuite ALL:!ADH:RC4+RSA:+HIGH:+MEDIUM:-LOW:-SSLv2:-EXP
+        SSLCertificateFile /var/lib/puppet/ssl/<%= fqdn %>/certs/<%= scope.lookupvar('puppet::server::passenger::config::servername') %>.pem
+        SSLCertificateKeyFile /var/lib/puppet/ssl/<%= fqdn %>/private_keys/<%= scope.lookupvar('puppet::server::passenger::config::servername') %>.pem
+        SSLCertificateChainFile /var/lib/puppet/ssl/<%= fqdn %>/certs/ca.pem
+        SSLCACertificateFile /var/lib/puppet/ssl/<%= fqdn %>/ca/ca_crt.pem
+        SSLVerifyClient optional
+        SSLVerifyDepth 1
+        SSLOptions +StdEnvVars
+
+        RequestHeader set X-SSL-Subject %{SSL_CLIENT_S_DN}e
+        RequestHeader set X-Client-DN %{SSL_CLIENT_S_DN}e
+        RequestHeader set X-Client-Verify %{SSL_CLIENT_VERIFY}e
+<% elsif scope.lookupvar('puppet::server::proxy') == true -%>
+        SSLEngine off
+
+        # Obtain Authentication Information from Client Request Headers
+        SetEnvIf X-Client-Verify "(.*)" SSL_CLIENT_VERIFY=$1
+        SetEnvIf X-SSL-Client-DN "(.*)" SSL_CLIENT_S_DN=$1
+<% end -%>
+
+        DocumentRoot <%= docroot %>
+        RackBaseURI /
+        <Directory <%= docroot %>>
+                Options None
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+       
+        ErrorLog /var/log/httpd/<%= fqdn %>_error.log
+        LogLevel warn
+        CustomLog /var/log/httpd/<%= fqdn %>_access.log combined
+        ServerSignature On
+
+</VirtualHost>
+
+
